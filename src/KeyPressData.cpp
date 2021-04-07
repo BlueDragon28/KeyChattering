@@ -45,6 +45,7 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
         
         if (timeSinceLastPress < m_timeOfChatter)
         {
+            std::cout << "Chatter on key " << key << std::endl;
             return true;
         }
         else
