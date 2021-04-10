@@ -39,6 +39,7 @@ private:
     int keyReleaseInfoSize() const;*/
 
     static std::unique_ptr<KeyPressData> _instance;
+    static const KeyPressInfo _staticKeyPressInfo;
 
     std::vector<KeyPressInfo> m_keyPressInfo;
     std::vector<KeyPressInfo> m_keyReleaseInfo;

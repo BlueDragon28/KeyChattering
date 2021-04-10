@@ -3,6 +3,7 @@
 #include <chrono>
 
 std::unique_ptr<KeyPressData> KeyPressData::_instance = nullptr;
+const KeyPressData::KeyPressInfo KeyPressData::_staticKeyPressInfo = {};
 
 KeyPressData::KeyPressData() :
     m_timeOfChatter(50000.)
@@ -129,7 +130,7 @@ int KeyPressData::findKeyReleasePos(unsigned long key) const
 const KeyPressData::KeyPressInfo& KeyPressData::getKeyPressInfo(int pos) const
 {
     if (pos < 0 || pos >= m_keyPressInfo.size()) 
-        return {};
+        return _staticKeyPressInfo;
     std::lock_guard<std::mutex>guard(m_keyPressMutex);
     return m_keyPressInfo.at(pos);
 }
@@ -137,7 +138,7 @@ const KeyPressData::KeyPressInfo& KeyPressData::getKeyPressInfo(int pos) const
 const KeyPressData::KeyPressInfo& KeyPressData::getKeyReleaseInfo(int pos) const
 {
     if (pos < 0 || pos >= m_keyReleaseInfo.size())
-        return {};
+        return _staticKeyPressInfo;
     std::lock_guard<std::mutex>guard(m_keyReleaseMutex);
     return m_keyReleaseInfo.at(pos);
 }
