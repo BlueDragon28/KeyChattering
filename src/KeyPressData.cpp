@@ -6,7 +6,12 @@ std::unique_ptr<KeyPressData> KeyPressData::_instance = nullptr;
 const KeyPressData::KeyPressInfo KeyPressData::_staticKeyPressInfo = {};
 
 KeyPressData::KeyPressData() :
-    m_timeOfChatter(50000.)
+    m_timeOfChatter(50000.),
+#ifdef NDEBUG
+    m_isDebugEnabled(false)
+#else
+    m_isDebugEnabled(true)
+#endif
 {}
 
 KeyPressData::~KeyPressData()
@@ -45,7 +50,8 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
         
         if (timeSinceLastPress < m_timeOfChatter)
         {
-            std::cout << "Chatter on key " << key << ", Time since last press: " << timeSinceLastPress.count() << std::endl;
+            if (m_isDebugEnabled)
+                std::cout << "Chatter on key " << key << ", Time since last press: " << timeSinceLastPress.count() << std::endl;
             return true;
         }
         else
@@ -169,4 +175,17 @@ void KeyPressData::setKeyReleaseInfoTime(int pos, std::chrono::time_point<std::c
         return;
     std::lock_guard<std::mutex>guard(m_keyReleaseMutex);
     m_keyReleaseInfo[pos].timeWhenPressed = time;
+}
+
+void KeyPressData::setChatterTime(int msec)
+{
+    // Setting the time of chatter.
+    if (msec <= 0)
+        return;
+    m_timeOfChatter = std::chrono::duration<double, std::micro>(double(msec) * 1000);
+}
+
+void KeyPressData::enableDebug(bool value)
+{
+    m_isDebugEnabled = value;
 }

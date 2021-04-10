@@ -26,6 +26,9 @@ public:
     bool isKeyPressChatter(unsigned long key);
     bool isKeyReleaseChatter(unsigned long key);
 
+    void setChatterTime(int msec);
+    void enableDebug(bool enable);
+
 private:
     int findKeyPressPos(unsigned long key) const;
     int findKeyReleasePos(unsigned long key) const;
@@ -46,6 +49,8 @@ private:
     mutable std::mutex m_keyPressMutex;
     mutable std::mutex m_keyReleaseMutex;
     std::chrono::duration<double, std::micro> m_timeOfChatter;
+
+    bool m_isDebugEnabled;
 };
 
 #endif // KEYCHATTERING_KEYPRESSDATA_H_

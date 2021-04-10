@@ -1,17 +1,18 @@
 #include "Application.h"
 #include "KeyPressData.h"
 #include "KeyboardHook.h"
+#include "CommandLineParsing.h"
 #include <iostream>
 
 std::unique_ptr<Application> Application::_instance = nullptr;
 
-Application::Application() :
+Application::Application(int &argc, char**& argv) :
     m_isApplicationRunning(true),
     m_initSuccess(0),
     m_hookID(0),
     m_hookThreadID(0)
 {
-    init();
+    init(argc, argv);
 }
 
 Application::~Application()
@@ -24,7 +25,21 @@ Application* Application::createInstance()
     // If no instance of Application has been created, create a new instance
     // and then return it.
     if (!_instance)
-        _instance = std::unique_ptr<Application>(new Application());
+    {
+        int argc = 0;
+        char** argv = nullptr;
+        return createInstance(argc, argv);
+    }
+    
+    return _instance.get();
+}
+
+Application* Application::createInstance(int& argc, char**& argv)
+{
+    // If no instance of Application has been created, create a new instance
+    // and then return it.
+    if (!_instance)
+        _instance = std::unique_ptr<Application>(new Application(argc, argv));
     
     return _instance.get();
 }
@@ -67,14 +82,32 @@ bool Application::run()
     return true;
 }
 
-void Application::init()
+void Application::init(int& argc, char**& argv)
 {
     // This function initialize the core of the program.
-    // It initialize the key data, create the keyhook
+    // It parse the command line, initialize the key data, create the keyhook
     // and create the Ctrl+C signal handler.
+
+    // Parsing the command line.
+    CommandLineParsing cmdParsing(argc, argv);
 
     // Initialize the KeyPressData class.
     KeyPressData::createInstance();
+
+    // Set the time of chatter if treated in the command line arguments.
+    if (cmdParsing.isMSecSet())
+        KeyPressData::instance()->setChatterTime(cmdParsing.msec());
+
+    // Enable debug.
+    bool debug = false;
+    if (cmdParsing.isDebugSet())
+    {
+        KeyPressData::instance()->enableDebug(true);
+        debug = true;
+    }
+
+    if (debug)
+        std::cout << "Program starting!" << std::endl;
 
     // Create the hook into an another thread.
     m_tKeyboardHook = std::thread(&Application::initAndRunKeyboardHook, this);
@@ -94,7 +127,8 @@ void Application::init()
         std::cout << "Failed to create the keyboard hook." << std::endl;
     }
 
-    std::cout << "init success!" << std::endl;
+    if (debug)
+        std::cout << "init success!" << std::endl;
 }
 
 void Application::initAndRunKeyboardHook()

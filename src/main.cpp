@@ -5,9 +5,8 @@
 #include "KeyboardHook.h"
 #include "Application.h"
 
-int main()
-{   
-    std::cout << "Program starting!" << std::endl;
-    Application* app = Application::createInstance();
+int main(int argc, char** argv)
+{
+    Application* app = Application::createInstance(argc, argv);
     return app->run();
 }

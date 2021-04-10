@@ -11,16 +11,17 @@
 class Application
 {
     Application(const Application&) = delete;
-    Application();
+    Application(int &argc, char**& argv);
 public:
     ~Application();
 
     static Application* createInstance();
+    static Application* createInstance(int& argc, char**& argv);
     static Application* instance();
     bool run();
 
 private:
-    void init();
+    void init(int& argc, char**& argv);
     void deinit();
     void initAndRunKeyboardHook();
     void createCtrlCSignalHandler();
