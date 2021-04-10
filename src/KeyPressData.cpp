@@ -5,8 +5,7 @@
 std::unique_ptr<KeyPressData> KeyPressData::_instance = nullptr;
 
 KeyPressData::KeyPressData() :
-    //m_timeOfChatter(1000.)
-    m_timeOfChatter(1000.)
+    m_timeOfChatter(50000.)
 {}
 
 KeyPressData::~KeyPressData()
@@ -45,7 +44,7 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
         
         if (timeSinceLastPress < m_timeOfChatter)
         {
-            std::cout << "Chatter on key " << key << std::endl;
+            std::cout << "Chatter on key " << key << ", Time since last press: " << timeSinceLastPress.count() << std::endl;
             return true;
         }
         else
