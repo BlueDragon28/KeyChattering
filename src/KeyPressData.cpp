@@ -2,6 +2,8 @@
 #include <iostream>
 #include <chrono>
 
+#include "Windows.h"
+
 std::unique_ptr<KeyPressData> KeyPressData::_instance = nullptr;
 const KeyPressData::KeyPressInfo KeyPressData::_staticKeyPressInfo = {};
 
@@ -51,7 +53,7 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
         if (timeSinceLastPress < m_timeOfChatter)
         {
             if (m_isDebugEnabled)
-                std::cout << "Chatter on key " << key << ", Time since last press: " << timeSinceLastPress.count() << std::endl;
+                std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << std::endl;
             return true;
         }
         else
@@ -188,4 +190,334 @@ void KeyPressData::setChatterTime(int msec)
 void KeyPressData::enableDebug(bool value)
 {
     m_isDebugEnabled = value;
+}
+
+std::string KeyPressData::keyName(unsigned long keyNumber)
+{
+    // Base on the windows documentation : https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes
+    // Return the name of a key.
+    switch(keyNumber)
+    {
+    case VK_BACK:
+        return "backspace";
+    case VK_TAB:
+        return "tab";
+    case VK_CLEAR:
+        return "clear";
+    case VK_RETURN:
+        return "enter";
+    case VK_SHIFT:
+        return "shift";
+    case VK_CONTROL:
+        return "control";
+    case VK_MENU:
+        return "alt";
+    case VK_PAUSE:
+        return "pause";
+    case VK_CAPITAL:
+        return "caps lock";
+    case VK_KANA:
+        return "ime kana";
+    case VK_ESCAPE:
+        return "escape";
+    case VK_SPACE:
+        return "spacebar";
+    case VK_PRIOR:
+        return "page up";
+    case VK_NEXT:
+        return "page down";
+    case VK_END:
+        return "end";
+    case VK_HOME:
+        return "home";
+    case VK_LEFT:
+        return "left arrow";
+    case VK_UP:
+        return "up arrow";
+    case VK_RIGHT:
+        return "right arrow";
+    case VK_DOWN:
+        return "down arrow";
+    case VK_SELECT:
+        return "select";
+    case VK_PRINT:
+        return "print";
+    case VK_EXECUTE:
+        return "execute";
+    case VK_SNAPSHOT:
+        return "print screen";
+    case VK_INSERT:
+        return "insert";
+    case VK_DELETE:
+        return "delete";
+    case VK_HELP:
+        return "HELP";
+    case 0x30:
+        return "0";
+    case 0x31:
+        return "1";
+    case 0x32:
+        return "2";
+    case 0x33:
+        return "3";
+    case 0x34:
+        return "4";
+    case 0x35:
+        return "5";
+    case 0x36:
+        return "6";
+    case 0x37:
+        return "7";
+    case 0x38:
+        return "8";
+    case 0x39:
+        return "9";
+    case 0x41:
+        return "A";
+    case 0x42:
+        return "B";
+    case 0x43:
+        return "C";
+    case 0x44:
+        return "D";
+    case 0x45:
+        return "E";
+    case 0x46:
+        return "F";
+    case 0x47:
+        return "G";
+    case 0x48:
+        return "H";
+    case 0x49:
+        return "I";
+    case 0x4A:
+        return "J";
+    case 0x4B:
+        return "K";
+    case 0x4C:
+        return "L";
+    case 0x4D:
+        return "M";
+    case 0x4E:
+        return "N";
+    case 0x4F:
+        return "O";
+    case 0x50:
+        return "P";
+    case 0x51:
+        return "Q";
+    case 0x52:
+        return "R";
+    case 0x53:
+        return "S";
+    case 0x54:
+        return "T";
+    case 0x55:
+        return "U";
+    case 0x56:
+        return "V";
+    case 0x57:
+        return "W";
+    case 0x58:
+        return "X";
+    case 0x59:
+        return "Y";
+    case 0x5A:
+        return "Z";
+    case VK_LWIN:
+        return "left windows";
+    case VK_RWIN:
+        return "right windows";
+    case VK_APPS:
+        return "application";
+    case VK_SLEEP:
+        return "computer sleep";
+    case VK_NUMPAD0:
+        return "numpad 0";
+    case VK_NUMPAD1:
+        return "numpad 1";
+    case VK_NUMPAD2:
+        return "numpad 2";
+    case VK_NUMPAD3:
+        return "numpad 3";
+    case VK_NUMPAD4:
+        return "numpad 4";
+    case VK_NUMPAD5:
+        return "numpad 5";
+    case VK_NUMPAD6:
+        return "numpad 6";
+    case VK_NUMPAD7:
+        return "numpad 7";
+    case VK_NUMPAD8:
+        return "numpad 8";
+    case VK_NUMPAD9:
+        return "numpad 9";
+    case VK_MULTIPLY:
+        return "muliply";
+    case VK_ADD:
+        return "add";
+    case VK_SEPARATOR:
+        return "separator";
+    case VK_SUBTRACT:
+        return "subtract";
+    case VK_DECIMAL:
+        return "decimal";
+    case VK_DIVIDE:
+        return "devide";
+    case VK_F1:
+        return "F1";
+    case VK_F2:
+        return "F2";
+    case VK_F3:
+        return "F3";
+    case VK_F4:
+        return "F4";
+    case VK_F5:
+        return "F5";
+    case VK_F6:
+        return "F6";
+    case VK_F7:
+        return "F7";
+    case VK_F8:
+        return "F8";
+    case VK_F9:
+        return "F9";
+    case VK_F10:
+        return "F10";
+    case VK_F11:
+        return "F11";
+    case VK_F12:
+        return "F12";
+    case VK_F13:
+        return "F13";
+    case VK_F14:
+        return "F14";
+    case VK_F15:
+        return "F15";
+    case VK_F16:
+        return "F16";
+    case VK_F17:
+        return "F17";
+    case VK_F18:
+        return "F18";
+    case VK_F19:
+        return "F19";
+    case VK_F20:
+        return "F20";
+    case VK_F21:
+        return "F21";
+    case VK_F22:
+        return "F22";
+    case VK_F23:
+        return "F23";
+    case VK_F24:
+        return "F24";
+    case VK_NUMLOCK:
+        return "num lock";
+    case VK_SCROLL:
+        return "scroll lock";
+    case VK_LSHIFT:
+        return "left shift";
+    case VK_RSHIFT:
+        return "right shift";
+    case VK_LCONTROL:
+        return "left control";
+    case VK_RCONTROL:
+        return "right control";
+    case VK_LMENU:
+        return "left menu";
+    case VK_RMENU:
+        return "right menu";
+    case VK_BROWSER_BACK:
+        return "browser back";
+    case VK_BROWSER_FORWARD:
+        return "browser forward";
+    case VK_BROWSER_REFRESH:
+        return "browser refresh";
+    case VK_BROWSER_STOP:
+        return "browser stop";
+    case VK_BROWSER_SEARCH:
+        return "browser search";
+    case VK_BROWSER_FAVORITES:
+        return "browser favorites";
+    case VK_BROWSER_HOME:
+        return "browser home";
+    case VK_VOLUME_MUTE:    
+        return "volume mute";
+    case VK_VOLUME_UP:  
+        return "volume up";
+    case VK_VOLUME_DOWN:
+        return "volume down";
+    case VK_MEDIA_NEXT_TRACK:
+        return "media next track";
+    case VK_MEDIA_PREV_TRACK:
+        return "media previous track";
+    case VK_MEDIA_STOP:
+        return "media stop";
+    case VK_MEDIA_PLAY_PAUSE:
+        return "media play/pause";
+    case VK_LAUNCH_MAIL:
+        return "launch mail";
+    case VK_LAUNCH_APP1:
+        return "launch app1";
+    case VK_LAUNCH_APP2:
+        return "launch app2";
+    case VK_OEM_1:
+        return ";: us layout";
+    case VK_OEM_PLUS:
+        return "+";
+    case VK_OEM_COMMA:
+        return ",";
+    case VK_OEM_MINUS:
+        return "-";
+    case VK_OEM_PERIOD:
+        return ".";
+    case VK_OEM_2:
+        return "/? us layout";
+    case VK_OEM_3:
+        return "~ us layout";
+    case VK_OEM_4:
+        return "[{ us layout";
+    case VK_OEM_5:
+        return "\\| us layout";
+    case VK_OEM_6:
+        return "]} us layout";
+    case VK_OEM_7:
+        return "single-quote/double quote us layout";
+    case VK_PROCESSKEY:
+        return "ime process";
+    case VK_ATTN:
+        return "attention interrupt";
+    case VK_CRSEL:
+        return "crsel";
+    case VK_EXSEL:
+        return "exsel";
+    case VK_EREOF:
+        return "erase eof";
+    case VK_PLAY:
+        return "play";
+    case VK_ZOOM:
+        return "zoom";
+    case VK_PA1:
+        return "pa1";
+    case VK_OEM_CLEAR:
+        return "clear";
+    case VK_JUNJA:
+        return "ime junja mode";
+    case VK_FINAL:
+        return "ime final mode";
+    case VK_HANJA:
+        return "ime hanja mode";
+    case 0x1A:
+        return "ime off";
+    case VK_CONVERT:
+        return "ime convert";
+    case VK_NONCONVERT:
+        return "ime nonconvert";
+    case VK_ACCEPT:
+        return "ime accept";
+    case VK_MODECHANGE:
+        return "ime mode change request";
+    }
+    return "unknow";
 }

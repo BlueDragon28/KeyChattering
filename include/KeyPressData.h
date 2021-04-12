@@ -5,6 +5,7 @@
 #include <vector>
 #include <memory>
 #include <mutex>
+#include <string>
 
 class KeyPressData
 {
@@ -22,6 +23,7 @@ public:
 
     static KeyPressData* createInstance();
     static KeyPressData* instance();
+    static std::string keyName(unsigned long keyNumber);
 
     bool isKeyPressChatter(unsigned long key);
     bool isKeyReleaseChatter(unsigned long key);
