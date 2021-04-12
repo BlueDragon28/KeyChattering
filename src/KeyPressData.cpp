@@ -47,13 +47,13 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
     int keyPos = findKeyPressPos(key);
     if (keyPos >= 0)
     {
-        std::chrono::duration<double, std::micro> timeSinceLastPress = 
+        std::chrono::duration<double, std::milli> timeSinceLastPress = 
             currentTime - getKeyPressInfo(keyPos).timeWhenPressed;
         
         if (timeSinceLastPress < m_timeOfChatter)
         {
             if (m_isDebugEnabled)
-                std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << std::endl;
+                std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << " ms." << std::endl;
             return true;
         }
         else
