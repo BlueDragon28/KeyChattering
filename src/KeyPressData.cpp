@@ -110,7 +110,6 @@ bool KeyPressData::isKeyReleaseChatter(unsigned long key)
             return true;
         else
         {
-            m_keyReleaseInfo[keyPos].timeWhenPressed = currentTime;
             setKeyReleaseInfoTime(keyPos, currentTime);
             return false;
         }
