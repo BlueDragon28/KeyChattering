@@ -41,6 +41,7 @@ KeyPressData::~KeyPressData()
 
 void KeyPressData::waitForThreadToFinish()
 {
+    std::lock_guard<std::mutex>guard(m_threadReleaseKeysMutex);
     for (int i = 0; i < m_threadReleaseKeys.size(); i++)
     {
         if (m_threadReleaseKeys.at(i).joinable())
@@ -141,6 +142,7 @@ bool KeyPressData::isKeyReleaseChatter(unsigned long key)
     // then, delaying the key release.
     if ((timeSinceStartingOfTheProgram - getKeyPressInfo(keyPressPos).timeWhenPressedSinceTheStartingOfTheProgram) < m_timeOfChatter)
     {
+        std::lock_guard<std::mutex>guard(m_threadReleaseKeysMutex);
         m_threadReleaseKeys.push_back(std::thread(&KeyPressData::waitBeforeReleasingKey, this, key, timeSinceStartingOfTheProgram));
         return true;
     }
