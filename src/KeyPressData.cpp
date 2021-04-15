@@ -313,6 +313,17 @@ void KeyPressData::setKeyReleaseTimeSinceStartingOfTheProgram(int pos, const std
     m_keyReleaseInfo[pos].timeWhenPressedSinceTheStartingOfTheProgram = time;
 }
 
+void KeyPressData::removingFinishedThread()
+{
+    // Removing all the finished thread inside m_threadReleaseKeys.
+    std::lock_guard<std::mutex>guard(m_threadReleaseKeysMutex);
+    for (int i = m_threadReleaseKeys.size() - 1; i >= 0; i--)
+    {
+        if (!m_threadReleaseKeys.at(i).joinable())
+            m_threadReleaseKeys.erase(m_threadReleaseKeys.cbegin()+i);
+    }
+}
+
 std::string KeyPressData::keyName(unsigned long keyNumber)
 {
     // Base on the windows documentation : https://docs.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes

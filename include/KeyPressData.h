@@ -60,6 +60,7 @@ public:
     void setChatterTime(int msec);
     void enableDebug(bool enable);
     void waitForThreadToFinish();
+    void removingFinishedThread();
 
 private:
     int findKeyPressPos(unsigned long key) const;
@@ -86,6 +87,7 @@ private:
     std::chrono::duration<double, std::micro> m_timeOfChatter;
     std::chrono::time_point<std::chrono::system_clock> m_timeSinceProgramStarted;
     std::vector<std::thread> m_threadReleaseKeys;
+    std::mutex m_threadReleaseKeysMutex;
 
     std::atomic<bool> m_isDebugEnabled;
 };

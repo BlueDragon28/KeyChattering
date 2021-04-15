@@ -95,7 +95,10 @@ bool Application::run()
         return false;
     
     while (m_isApplicationRunning)
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+    {
+        KeyPressData::instance()->removingFinishedThread();
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+    }
     
     return true;
 }
