@@ -25,6 +25,7 @@
 #include <mutex>
 #include <string>
 #include <thread>
+#include <atomic>
 
 class KeyPressData
 {
@@ -86,7 +87,7 @@ private:
     std::chrono::time_point<std::chrono::system_clock> m_timeSinceProgramStarted;
     std::vector<std::thread> m_threadReleaseKeys;
 
-    bool m_isDebugEnabled;
+    std::atomic<bool> m_isDebugEnabled;
 };
 
 #endif // KEYCHATTERING_KEYPRESSDATA_H_
