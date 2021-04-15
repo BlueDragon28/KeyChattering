@@ -24,6 +24,7 @@
 #include <memory>
 #include <mutex>
 #include <string>
+#include <thread>
 
 class KeyPressData
 {
@@ -33,6 +34,13 @@ class KeyPressData
     {
         unsigned long keyID;
         std::chrono::time_point<std::chrono::system_clock> timeWhenPressed;
+    };
+
+    struct KeyReleaseInfo
+    {
+        unsigned long keyID;
+        std::chrono::time_point<std::chrono::system_clock> timeWhenPressed;
+        bool isKeyPressedSinceRelease;
     };
 
     KeyPressData();
@@ -52,20 +60,20 @@ public:
 private:
     int findKeyPressPos(unsigned long key) const;
     int findKeyReleasePos(unsigned long key) const;
-    const KeyPressInfo& getKeyPressInfo(int pos) const;
-    const KeyPressInfo& getKeyReleaseInfo(int pos) const;
+    const KeyPressInfo getKeyPressInfo(int pos) const;
+    const KeyReleaseInfo getKeyReleaseInfo(int pos) const;
     void appendKeyPressInfo(const KeyPressInfo& keyInfo);
-    void appendKeyReleaseInfo(const KeyPressInfo& keyInfo);
+    void appendKeyReleaseInfo(const KeyReleaseInfo& keyInfo);
     void setKeyPressInfoTime(int pos, std::chrono::time_point<std::chrono::system_clock> time);
     void setKeyReleaseInfoTime(int pos, std::chrono::time_point<std::chrono::system_clock> time);
+    void setKeyReleaseIsKeyPressedSinceRelease(int pos, bool value);
     /*int keyPressInfoSize() const;
     int keyReleaseInfoSize() const;*/
 
     static std::unique_ptr<KeyPressData> _instance;
-    static const KeyPressInfo _staticKeyPressInfo;
 
     std::vector<KeyPressInfo> m_keyPressInfo;
-    std::vector<KeyPressInfo> m_keyReleaseInfo;
+    std::vector<KeyReleaseInfo> m_keyReleaseInfo;
     mutable std::mutex m_keyPressMutex;
     mutable std::mutex m_keyReleaseMutex;
     std::chrono::duration<double, std::micro> m_timeOfChatter;

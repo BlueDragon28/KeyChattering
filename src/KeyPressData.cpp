@@ -23,7 +23,6 @@
 #include "Windows.h"
 
 std::unique_ptr<KeyPressData> KeyPressData::_instance = nullptr;
-const KeyPressData::KeyPressInfo KeyPressData::_staticKeyPressInfo = {};
 
 KeyPressData::KeyPressData() :
     m_timeOfChatter(50000.),
@@ -111,14 +110,16 @@ bool KeyPressData::isKeyReleaseChatter(unsigned long key)
         else
         {
             setKeyReleaseInfoTime(keyPos, currentTime);
+            setKeyReleaseIsKeyPressedSinceRelease(keyPos, false);
             return false;
         }
     }
     else
     {
-        KeyPressInfo keyInfo = {};
+        KeyReleaseInfo keyInfo = {};
         keyInfo.keyID = key;
         keyInfo.timeWhenPressed = currentTime;
+        keyInfo.isKeyPressedSinceRelease = false;
         appendKeyReleaseInfo(keyInfo);
         return false;
     }
@@ -152,18 +153,18 @@ int KeyPressData::findKeyReleasePos(unsigned long key) const
     return -1;
 }
 
-const KeyPressData::KeyPressInfo& KeyPressData::getKeyPressInfo(int pos) const
+const KeyPressData::KeyPressInfo KeyPressData::getKeyPressInfo(int pos) const
 {
     if (pos < 0 || pos >= m_keyPressInfo.size()) 
-        return _staticKeyPressInfo;
+        return {};
     std::lock_guard<std::mutex>guard(m_keyPressMutex);
     return m_keyPressInfo.at(pos);
 }
 
-const KeyPressData::KeyPressInfo& KeyPressData::getKeyReleaseInfo(int pos) const
+const KeyPressData::KeyReleaseInfo KeyPressData::getKeyReleaseInfo(int pos) const
 {
     if (pos < 0 || pos >= m_keyReleaseInfo.size())
-        return _staticKeyPressInfo;
+        return {};
     std::lock_guard<std::mutex>guard(m_keyReleaseMutex);
     return m_keyReleaseInfo.at(pos);
 }
@@ -174,7 +175,7 @@ void KeyPressData::appendKeyPressInfo(const KeyPressInfo& keyInfo)
     m_keyPressInfo.push_back(keyInfo);
 }
 
-void KeyPressData::appendKeyReleaseInfo(const KeyPressInfo& keyInfo)
+void KeyPressData::appendKeyReleaseInfo(const KeyReleaseInfo& keyInfo)
 {
     std::lock_guard<std::mutex>guard(m_keyReleaseMutex);
     m_keyReleaseInfo.push_back(keyInfo);
@@ -207,6 +208,14 @@ void KeyPressData::setChatterTime(int msec)
 void KeyPressData::enableDebug(bool value)
 {
     m_isDebugEnabled = value;
+}
+
+void KeyPressData::setKeyReleaseIsKeyPressedSinceRelease(int pos, bool value)
+{
+    if (pos < 0 || pos >= m_keyReleaseInfo.size())
+        return;
+    std::lock_guard<std::mutex>guard(m_keyReleaseMutex);
+    m_keyReleaseInfo[pos].isKeyPressedSinceRelease = value;
 }
 
 std::string KeyPressData::keyName(unsigned long keyNumber)
