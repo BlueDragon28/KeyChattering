@@ -201,6 +201,7 @@ BOOL Application::ctrlcSignalHandler(DWORD signal)
     case CTRL_BREAK_EVENT:
     {
         instance()->deinit();
+        KeyPressData::instance()->waitForThreadToFinish();
     } break;
     }
 

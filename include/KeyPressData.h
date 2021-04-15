@@ -34,12 +34,14 @@ class KeyPressData
     {
         unsigned long keyID;
         std::chrono::time_point<std::chrono::system_clock> timeWhenPressed;
+        std::chrono::duration<double, std::milli> timeWhenPressedSinceTheStartingOfTheProgram;
     };
 
     struct KeyReleaseInfo
     {
         unsigned long keyID;
         std::chrono::time_point<std::chrono::system_clock> timeWhenPressed;
+        std::chrono::duration<double, std::milli> timeWhenPressedSinceTheStartingOfTheProgram;
         bool isKeyPressedSinceRelease;
     };
 
@@ -56,6 +58,7 @@ public:
 
     void setChatterTime(int msec);
     void enableDebug(bool enable);
+    void waitForThreadToFinish();
 
 private:
     int findKeyPressPos(unsigned long key) const;
@@ -69,6 +72,9 @@ private:
     void setKeyReleaseIsKeyPressedSinceRelease(int pos, bool value);
     /*int keyPressInfoSize() const;
     int keyReleaseInfoSize() const;*/
+    void waitBeforeReleasingKey(unsigned long key, const std::chrono::duration<double, std::milli> timeWhenKeyRelease);
+    void setKeyPressTimeSinceStartingOfTheProgram(int pos, const std::chrono::duration<double, std::milli>& time);
+    void setKeyReleaseTimeSinceStartingOfTheProgram(int pos, const std::chrono::duration<double, std::milli>& time);
 
     static std::unique_ptr<KeyPressData> _instance;
 
@@ -77,6 +83,8 @@ private:
     mutable std::mutex m_keyPressMutex;
     mutable std::mutex m_keyReleaseMutex;
     std::chrono::duration<double, std::micro> m_timeOfChatter;
+    std::chrono::time_point<std::chrono::system_clock> m_timeSinceProgramStarted;
+    std::vector<std::thread> m_threadReleaseKeys;
 
     bool m_isDebugEnabled;
 };
