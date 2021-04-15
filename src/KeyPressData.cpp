@@ -74,34 +74,35 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
     auto currentTime = std::chrono::system_clock::now();
 
     int keyPos = findKeyPressPos(key);
-    if (keyPos >= 0)
-    {
-        std::chrono::duration<double, std::milli> timeSinceLastPress = 
-            currentTime - getKeyPressInfo(keyPos).timeWhenPressed;
 
-        std::chrono::duration<double, std::milli> timeSinceStartingOfTheProgram =
-            currentTime - m_timeSinceProgramStarted;
-        
-        setKeyPressTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
-        
-        if (timeSinceLastPress < m_timeOfChatter)
-        {
-            if (m_isDebugEnabled)
-                std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << " ms." << std::endl;
-            return true;
-        }
-        else
-        {
-            setKeyPressInfoTime(keyPos, currentTime);
-            return false;
-        }
-    }
-    else
+    std::chrono::duration<double, std::milli> timeSinceStartingOfTheProgram =
+        currentTime - m_timeSinceProgramStarted;
+
+    // If the key is not in the list, insert the key into it.
+    if (keyPos < 0)
     {
         KeyPressInfo keyInfo = {};
         keyInfo.keyID = key;
         keyInfo.timeWhenPressed = currentTime;
+        keyInfo.timeWhenPressedSinceTheStartingOfTheProgram = timeSinceStartingOfTheProgram;
         appendKeyPressInfo(keyInfo);
+        return false;
+    }
+
+    std::chrono::duration<double, std::milli> timeSinceLastPress = 
+        currentTime - getKeyPressInfo(keyPos).timeWhenPressed;
+    
+    setKeyPressTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
+    
+    if (timeSinceLastPress < m_timeOfChatter)
+    {
+        if (m_isDebugEnabled)
+            std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << " ms." << std::endl;
+        return true;
+    }
+    else
+    {
+        setKeyPressInfoTime(keyPos, currentTime);
         return false;
     }
 }
@@ -118,35 +119,35 @@ bool KeyPressData::isKeyReleaseChatter(unsigned long key)
 
     int keyPos = findKeyReleasePos(key);
     int keyPressPos = findKeyPressPos(key);
-    if (keyPos >= 0)
-    {
-        std::chrono::duration<double, std::milli> timeSinceStartingOfTheProgram =
-            currentTime - m_timeSinceProgramStarted;
-        
-        setKeyReleaseTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
 
-        // If the release of the key happen in a time since le press of the key less than m_timeOfChatter,
-        // then, delaying the key release.
-        if ((timeSinceStartingOfTheProgram - getKeyPressInfo(keyPressPos).timeWhenPressedSinceTheStartingOfTheProgram) < m_timeOfChatter)
-        {
-            m_threadReleaseKeys.push_back(std::thread(&KeyPressData::waitBeforeReleasingKey, this, key, timeSinceStartingOfTheProgram));
-            std::cout << "reject release!" << std::endl;
-            return true;
-        }
-        else
-        {
-            setKeyReleaseInfoTime(keyPos, currentTime);
-            setKeyReleaseIsKeyPressedSinceRelease(keyPos, false);
-            return false;
-        }
-    }
-    else
+    // If no key has been released, releasing the key.
+    if (keyPos < 0)
     {
         KeyReleaseInfo keyInfo = {};
         keyInfo.keyID = key;
         keyInfo.timeWhenPressed = currentTime;
         keyInfo.isKeyPressedSinceRelease = false;
         appendKeyReleaseInfo(keyInfo);
+        keyPos = findKeyReleasePos(key);
+    }
+
+    // Getting the time that happen since the start of the program.
+    std::chrono::duration<double, std::milli> timeSinceStartingOfTheProgram =
+        currentTime - m_timeSinceProgramStarted;
+    
+    setKeyReleaseTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
+
+    // If the release of the key happen in a time since le press of the key less than m_timeOfChatter,
+    // then, delaying the key release.
+    if ((timeSinceStartingOfTheProgram - getKeyPressInfo(keyPressPos).timeWhenPressedSinceTheStartingOfTheProgram) < m_timeOfChatter)
+    {
+        m_threadReleaseKeys.push_back(std::thread(&KeyPressData::waitBeforeReleasingKey, this, key, timeSinceStartingOfTheProgram));
+        return true;
+    }
+    else
+    {
+        setKeyReleaseInfoTime(keyPos, currentTime);
+        setKeyReleaseIsKeyPressedSinceRelease(keyPos, false);
         return false;
     }
 }
@@ -192,7 +193,7 @@ void KeyPressData::waitBeforeReleasingKey(unsigned long key, const std::chrono::
             if (result != 1)
                 std::cout << "Failed to release the " << keyName(key) << " key." << std::endl;
             else
-                std::cout << "Key " << keyName(key) << "released!" << std::endl;
+                std::cout << "Key " << keyName(key) << " released!" << std::endl;
         }
     }
     // if not, the release is a chatter and need to be discarded.
