@@ -175,7 +175,8 @@ void KeyPressData::waitBeforeReleasingKey(unsigned long key, const std::chrono::
     // release, so, no need to release it again.
     if (timeWhenKeyRelease < getKeyReleaseInfo(keyReleasePos).timeWhenPressedSinceTheStartingOfTheProgram)
     {
-        std::cout << "A release already occured on the key " << keyName(key) << "." << std::endl;
+        if (m_isDebugEnabled)
+            std::cout << "A release already occured on the key " << keyName(key) << "." << std::endl;
         return;
     }
 
