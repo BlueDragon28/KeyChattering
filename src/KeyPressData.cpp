@@ -166,7 +166,7 @@ void KeyPressData::waitBeforeReleasingKey(unsigned long key, const std::chrono::
     */
 
     // Waiting.
-    std::this_thread::sleep_for(m_timeOfChatter*2);
+	std::this_thread::sleep_for(m_timeOfChatter);
 
     int keyPressPos = findKeyPressPos(key);
     int keyReleasePos = findKeyReleasePos(key);
