@@ -92,18 +92,22 @@ bool KeyPressData::isKeyPressChatter(unsigned long key)
 
     std::chrono::duration<double, std::milli> timeSinceLastPress = 
         currentTime - getKeyPressInfo(keyPos).timeWhenPressed;
-    
-    setKeyPressTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
+    std::chrono::duration<double, std::milli> lastPressTimeSinceStarting = getKeyPressInfo(keyPos).timeWhenPressedSinceTheStartingOfTheProgram;
     
     if (timeSinceLastPress < m_timeOfChatter)
     {
+        // check if the key is a repeat key, if true, accept the key.
+        if (lastPressTimeSinceStarting > getKeyReleaseInfo(findKeyReleasePos(key)).timeWhenPressedSinceTheStartingOfTheProgram)
+            return false;
         if (m_isDebugEnabled)
             std::cout << "Chatter on " << keyName(key) << " key. Time since last press: " << timeSinceLastPress.count() << " ms." << std::endl;
+        setKeyPressTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
         return true;
     }
     else
     {
         setKeyPressInfoTime(keyPos, currentTime);
+        setKeyPressTimeSinceStartingOfTheProgram(keyPos, timeSinceStartingOfTheProgram);
         return false;
     }
 }
