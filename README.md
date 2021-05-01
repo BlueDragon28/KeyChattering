@@ -9,6 +9,7 @@ You can run the program without arguments, it will block by default all the new 
 
 - `--time=arg` or `-t arg` to set the chatter time in milliseconds.
 - `--debug` or `-d` show debug output information when a key chatter is detected.
+- `--version` or `-v` show the version of the program.
 - `--help` or `-h` show help information about command line options.
 
 # Installation

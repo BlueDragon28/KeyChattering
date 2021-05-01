@@ -34,6 +34,7 @@ CommandLineParsing::CommandLineParsing(int& argc, char**& argv) :
     options.add_options()
         ("t,time", "Time since last press of the same key to treat this key has a chatter", cxxopts::value<int>())
         ("d,debug", "Print debug information when a key is chattering")
+        ("v,version", "Show the version of the program")
         ("h,help", "Print usage information.");
 
     // Parsing the command line.
@@ -44,6 +45,14 @@ CommandLineParsing::CommandLineParsing(int& argc, char**& argv) :
     if (result.count("help"))
     {
         std::cout << options.help() << std::endl;
+        std::exit(EXIT_SUCCESS);
+    }
+
+    // If the version options is in the command line argument,
+    // print the version of the program and exit.
+    if (result.count("version"))
+    {
+        std::cout << "Version: v0.1." << std::endl;
         std::exit(EXIT_SUCCESS);
     }
 
