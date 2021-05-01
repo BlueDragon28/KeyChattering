@@ -178,11 +178,7 @@ void KeyPressData::waitBeforeReleasingKey(unsigned long key, const std::chrono::
     // If the time since the last release is higher than the actual release, it's mean that the key is already
     // release, so, no need to release it again.
     if (timeWhenKeyRelease < getKeyReleaseInfo(keyReleasePos).timeWhenPressedSinceTheStartingOfTheProgram)
-    {
-        if (m_isDebugEnabled)
-            std::cout << "A release already occured on the key " << keyName(key) << "." << std::endl;
         return;
-    }
 
     // If the time since the last press is higher than the last press, it's mean that the user has released the key,
     // so we releasing the key.
@@ -199,15 +195,7 @@ void KeyPressData::waitBeforeReleasingKey(unsigned long key, const std::chrono::
         {
             if (result != 1)
                 std::cout << "Failed to release the " << keyName(key) << " key." << std::endl;
-            else
-                std::cout << "Key " << keyName(key) << " released!" << std::endl;
         }
-    }
-    // if not, the release is a chatter and need to be discarded.
-    else
-    {
-        if (m_isDebugEnabled)
-            std::cout << "discard " << keyName(key) << " releasing!" << std::endl;
     }
 }
 

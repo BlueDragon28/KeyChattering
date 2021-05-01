@@ -127,8 +127,7 @@ void Application::init(int& argc, char**& argv)
         debug = true;
     }
 
-    if (debug)
-        std::cout << "Program starting!" << std::endl;
+    std::cout << "Program starting!" << std::endl;
 
     // Create the hook into an another thread.
     m_tKeyboardHook = std::thread(&Application::initAndRunKeyboardHook, this);
@@ -148,8 +147,7 @@ void Application::init(int& argc, char**& argv)
         std::cout << "Failed to create the keyboard hook." << std::endl;
     }
 
-    if (debug)
-        std::cout << "init success!" << std::endl;
+    std::cout << "init success!" << std::endl;
 }
 
 void Application::initAndRunKeyboardHook()
