@@ -1,6 +1,16 @@
 # KeyChattering
 A program to delete double key entry (key chattering) on mechanical keyboard. It's working on Windows (tested on Windows 10). Keep in mind that is a dirty way to eliminate key chattering and may cause some glitch with the keyboard.
 
+# How it's working
+
+When the program receives key press and key release signal, it parse then separately.
+
+When a key presses signal is receive, the program checks if the time since the last press of the same key is less than `--time` option (or 50 ms by default if not set). If it's true, the program checks if there is a release key between the last press and the current press. If true, it means there is a chatter and the program discard the key. If not it means it's a repeat key and can be allowed.
+
+When a key releases signal is receive, the program checks if the time since the last press (press not release) and the current release is less than the `--time` option (or 50ms by default if not set). If it's true, the program discard the release and create a separated thread. In this thread, the program waits the `--time` option (or 50ms). After this time, it checks if there has been a release between the wait time. If true, the threads do nothing. If not, it checks if there is a press (chatter or not) since in the wait time. If true, it means the release was a chatter and the program do nothing. If not, the program release the key using the `SendInput` **WinApi** function to release the key.
+
+The use of the `SendInput` function by the program may be detected has hacking in some competitive game, so be aware.
+
 # How to use
 
 You can run the program without arguments, it will block by default all the new key pressed in a time below 50 millisecond from the previous same key. To close the program while it running, press the key combination **Ctrl+C** while focused to the console.
